@@ -1,6 +1,6 @@
 org: vilina
-app: tutorial
-service: tutorial
+app: api
+service: api
 frameworkVersion: '3'
 
 provider:

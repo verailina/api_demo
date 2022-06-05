@@ -3,6 +3,7 @@ from enum import Enum
 
 from fastapi import FastAPI
 from pydantic import BaseModel
+from mangum import Mangum
 
 
 class Language(str, Enum):
@@ -37,3 +38,6 @@ async def get_lang(lang: Language):
         return {"lang": lang, "message": "I speak English"}
     if lang == Language.russian:
         return {"lang": lang, "message": "Я говорю по-русски"}
+
+
+handler = Mangum(app)
