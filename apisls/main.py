@@ -1,7 +1,10 @@
 import os
-from fastapi import FastAPI
+import time
+from fastapi import FastAPI, Request
 from mangum import Mangum
 from enum import Enum
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.core.models import http
 
 
 class Language(str, Enum):
@@ -38,6 +41,19 @@ async def get_lang(lang: Language):
         return {"lang": lang, "message": "I speak English"}
     if lang == Language.russian:
         return {"lang": lang, "message": "Я говорю по-русски"}
+
+
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+
+    with xray_recorder.in_subsegment('subsegment_name') as subsegment:
+        subsegment.put_http_meta(http.URL, str(request.url))
+        subsegment.put_http_meta(http.METHOD, request.method)
+        start_time = time.time()
+        response = await call_next(request)
+        process_time = time.time() - start_time
+        response.headers["X-Process-Time"] = str(process_time)
+    return response
 
 
 handler = Mangum(app)

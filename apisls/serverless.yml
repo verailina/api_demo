@@ -22,8 +22,6 @@ custom:
         - python3.8
 
 functions:
-  hello:
-    handler: handler.hello
   app:
     package:
       include:
@@ -37,6 +35,7 @@ functions:
         - "node_modules/**"
 
     handler: main.handler
+    tracing: Active
     environment:
       STAGE: ${self:provider.stage}
     layers:
