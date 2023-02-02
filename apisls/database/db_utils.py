@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from apisls.database.models import Base, Plant
 from aws_xray_sdk.ext.sqlalchemy.query import XRaySessionMaker
-from typing import List
+
 
 trace_sql_query = True
 
