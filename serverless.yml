@@ -1,0 +1,63 @@
+org: vilina
+app: tutorial
+service: apisls
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.8
+  stage: ${opt:stage, "dev"}
+
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+
+    layer:
+      name: my-awesome-app-layer
+      description: My awesome app layer
+      compatibleRuntimes:
+        - python3.8
+
+functions:
+  app:
+    package:
+      patterns:
+        - "apisls/**"
+        - "!requirements.txt"
+        - "!.pd_cache/**"
+        - "!.idea/**"
+        - "!package.json"
+        - "!package-lock.json"
+        - "!.serverless/**"
+        - "!node_modules/**"
+        - "!.cache/**"
+
+    handler: apisls.main.handler
+    tracing: Active
+    environment:
+      STAGE: ${self:provider.stage}
+      POWERTOOLS_SERVICE_NAME: plants_api
+    layers:
+      - { Ref: PythonRequirementsLambdaLayer }
+    events:
+      - http:
+          method: get
+          path: /
+      - http:
+          method: any
+          path: /{proxy+}
+    vpc:
+      securityGroupIds:
+        - sg-05485da2eb01b50c5
+        - sg-05485da2eb01b50c5
+      subnetIds:
+        - subnet-01a58772b4041f940
+        - subnet-02cc6bd90ed21be95
+        - subnet-0b4f8f279beb096c9
+        - subnet-07423d757f462dd47
+        - subnet-0ff5dde446eeb22ab
+        - subnet-047ee927f40251049
